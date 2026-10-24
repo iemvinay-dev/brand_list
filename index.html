@@ -198,7 +198,7 @@
 <script>
   // Used only if brands.xlsx cannot be loaded (e.g. page opened directly from disk).
   var FALLBACK = [
-    {name:"Swing 'N' Fly", logo:"https://raw.githubusercontent.com/iemvinay-dev/brand_list/main/Logo_0.jpg", site:"https://zenmarketing.smartbiz.in/", keys:"Baby Walker, Swing N Fly, Swing and Fly"},
+    {name:"Swing 'N' Fly", logo:"https://raw.githubusercontent.com/iemvinay-dev/brand_list/main/Logo_0.jpg", site:"https://zenmarketing.smartbiz.in/", keys:"Baby Walker, Adjustable Walker, Swing N Fly, Swing and Fly"},
   ];
   var brands = [];
   var grid = document.getElementById("grid");
@@ -377,7 +377,8 @@
   };
   var CATEGORIES = [
     {icon:"bike", title:"Tricycle, Electric Vehicle & Baby Walker", items:[
-      {label:"Baby Walker", keys:["baby walker","rocker"], emoji:"\ud83d\udc76", bg:"linear-gradient(135deg,#f6d9c6,#f3b7c8)", img:"https://raw.githubusercontent.com/iemvinay-dev/brand_list/main/Icon_0.JPG", fit:"contain"}
+      {label:"Baby Walker", keys:["baby walker","rocker"], emoji:"\ud83d\udc76", bg:"linear-gradient(135deg,#f6d9c6,#f3b7c8)", img:"https://raw.githubusercontent.com/iemvinay-dev/brand_list/main/Icon_0.JPG", fit:"contain"},
+      {label:"Adjustable Walker", keys:["adjustable walker"], emoji:"\ud83d\udc63", bg:"linear-gradient(135deg,#cfe8f7,#9fc9ea)", img:"https://raw.githubusercontent.com/iemvinay-dev/brand_list/main/Icon_1", alts:["https://raw.githubusercontent.com/iemvinay-dev/brand_list/main/Icon_1.png"], fit:"contain"}
     ]}
   ];
   var catsEl = document.getElementById("cats"), catBtns = [];
@@ -398,7 +399,11 @@
       if (item.img) {
         var im = document.createElement("img"); im.src = item.img; im.alt = ""; im.loading = "lazy";
         if (item.fit) { im.style.objectFit = item.fit; ci.style.background = "#fff"; }
-        im.onerror = function(){ im.remove(); ci.style.background = item.bg; ci.textContent = item.emoji; };
+        var tries = (item.alts || []).slice();
+        im.onerror = function(){
+          if (tries.length) { im.src = tries.shift(); return; }
+          im.remove(); ci.style.background = item.bg; ci.textContent = item.emoji;
+        };
         ci.appendChild(im);
       } else { ci.style.background = item.bg; ci.textContent = item.emoji; }
       var cl = document.createElement("span"); cl.className = "cl"; cl.textContent = item.label;
