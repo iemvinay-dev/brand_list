@@ -159,7 +159,7 @@
 <script>
   // Used only if brands.xlsx cannot be loaded (e.g. page opened directly from disk).
   var FALLBACK = [
-    {name:"Swing 'N' Fly", logo:"https://raw.githubusercontent.com/iemvinay-dev/brand_list/main/Logo_0.jpg", site:"https://zenmarketing.smartbiz.in/"},
+    {name:"Swing 'N' Fly", logo:"https://raw.githubusercontent.com/iemvinay-dev/brand_list/main/Logo_0.jpg", site:"https://zenmarketing.smartbiz.in/", keys:"Baby Walker, Swing N Fly, Swing and Fly"},
   ];
   var brands = [];
   var grid = document.getElementById("grid");
@@ -172,9 +172,15 @@
     return {
       name: String(o["brand name"] || o["brand"] || o["name"] || "").trim(),
       logo: String(o["logo url"] || o["logo link"] || o["logo"] || "").trim(),
-      site: String(o["website"] || o["link"] || o["url"] || "").trim()
+      site: String(o["website"] || o["link"] || o["url"] || "").trim(),
+      keys: String(o["search keys"] || o["search key"] || o["keywords"] || o["keyword"] || o["tags"] || o["tag"] || "").trim()
     };
   }
+  // Lower-case, drop apostrophes, turn other punctuation into spaces ("Swing 'N' Fly" -> "swing n fly")
+  function clean(s) {
+    return String(s || "").toLowerCase().replace(/['\u2019`]/g, "").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+  }
+  function prep(b) { b.hay = clean(b.name + " " + (b.keys || "")); return b; }
   function safeUrl(u) {
     if (!u) return "";
     if (!/^https?:\/\//i.test(u)) u = "https://" + u;
@@ -182,7 +188,7 @@
   }
   function parse(wb) {
     var ws = wb.Sheets[wb.SheetNames[0]];
-    brands = XLSX.utils.sheet_to_json(ws, {defval:""}).map(norm).filter(function(b){ return b.name; });
+    brands = XLSX.utils.sheet_to_json(ws, {defval:""}).map(norm).filter(function(b){ return b.name; }).map(prep);
     render();
   }
   function render() {
@@ -190,7 +196,7 @@
     var searching = term !== "";
     document.querySelector(".hero").classList.toggle("searching", searching);
     if (searching) { stop(); } else { start(); }
-    var shown = brands.filter(function(b){ return b.name.toLowerCase().indexOf(term) > -1; });
+    var shown = brands.filter(function(b){ return b.hay.indexOf(term) > -1; });
     emptyMsg.hidden = shown.length > 0;
     shown.forEach(function(b) {
       var href = safeUrl(b.site);
@@ -220,14 +226,14 @@
 
   fetch("brands.xlsx?v=" + Date.now(), {cache:"no-store"}).then(function(r){ if (!r.ok) throw 0; return r.arrayBuffer(); })
     .then(function(buf){ parse(XLSX.read(buf, {type:"array"})); })
-    .catch(function(){ brands = FALLBACK; render(); });
+    .catch(function(){ brands = FALLBACK.map(prep); render(); });
 
   // ---- Search bar ----
   var q = document.getElementById("q");
-  q.addEventListener("input", function(){ term = q.value.trim().toLowerCase(); render(); });
+  q.addEventListener("input", function(){ term = clean(q.value); render(); });
   document.getElementById("searchForm").addEventListener("submit", function(e){
     e.preventDefault();
-    term = q.value.trim().toLowerCase();
+    term = clean(q.value);
     var btn = document.querySelector(".sbtn");
     if (!term) {
       // No text: blink the button and put the cursor in the box
