@@ -58,11 +58,13 @@
   .slide h2 { margin:0 0 8px; font-size:clamp(1.05rem, 4vw, 1.7rem); max-width:16ch; line-height:1.2; }
   .slide p { margin:0; font-weight:700; background:#ffc83d; color:#222; align-self:flex-start; padding:4px 12px; border-radius:6px; font-size:clamp(.8rem, 2.6vw, 1rem); }
   .vp { position:relative; }
-  .nav { position:absolute; top:50%; transform:translateY(-50%); z-index:2; width:38px; height:38px; border-radius:50%; border:0; padding:0;
-         background:rgba(255,255,255,.92); box-shadow:0 2px 8px rgba(0,0,0,.25); display:flex; align-items:center; justify-content:center; cursor:pointer; }
-  .nav:hover { background:#fff; }
-  .nav:active { transform:translateY(-50%) scale(.94); }
-  .nav svg { width:20px; height:20px; }
+  .nav { position:absolute; top:50%; transform:translateY(-50%); z-index:2; width:34px; height:34px; border-radius:50%; border:0; padding:0;
+         background:rgba(255,255,255,.18); box-shadow:none; display:flex; align-items:center; justify-content:center; cursor:pointer;
+         transition:background .15s, box-shadow .15s, transform .15s; }
+  .nav svg { width:18px; height:18px; stroke:rgba(255,255,255,.75); transition:stroke .15s; }
+  /* highlighted only while pressed (or keyboard-focused) */
+  .nav:active, .nav:focus-visible { background:#fff; box-shadow:0 2px 8px rgba(0,0,0,.3); transform:translateY(-50%) scale(.94); }
+  .nav:active svg, .nav:focus-visible svg { stroke:#111; }
   .nav.prev { left:22px; }
   .nav.next { right:22px; }
   .dots { display:flex; justify-content:center; gap:10px; margin-top:14px; }
