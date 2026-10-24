@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=ABeeZee&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#e5e5e5; --hero:#0047ff; --fg:#000; --tile:#fff; --ink:#111; --muted:#555; --accent:#f5a623; --border:#d9d9d9; }
+  :root { --bg:#e5e5e5; --hero:#e1ad01; --fg:#000; --tile:#fff; --ink:#111; --muted:#555; --accent:#f5a623; --border:#d9d9d9; }
   * { box-sizing: border-box; }
   body { margin:0; background:var(--bg); color:var(--fg); font-family:"ABeeZee", system-ui, sans-serif; }
   main { max-width:1100px; margin:0 auto; padding:28px 16px 60px; }
@@ -60,7 +60,7 @@
   .nav.prev { left:22px; }
   .nav.next { right:22px; }
   .dots { display:flex; justify-content:center; gap:10px; margin-top:14px; }
-  .dot { width:12px; height:12px; border-radius:50%; border:0; padding:0; background:rgba(255,255,255,.4); cursor:pointer; }
+  .dot { width:12px; height:12px; border-radius:50%; border:0; padding:0; background:rgba(0,0,0,.28); cursor:pointer; }
   .dot.on { background:#fff; }
   .promo, .slide { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; pointer-events:none; cursor:default; }
   .slide img { -webkit-user-drag:none; }
@@ -86,7 +86,7 @@
   .filterbar { display:flex; justify-content:center; margin:0 0 20px; }
   .filterbar[hidden] { display:none; }
   .chip { display:flex; align-items:center; gap:10px; background:#fff; border:1px solid var(--border); border-radius:999px; padding:6px 8px 6px 16px; }
-  .chip button { border:0; background:var(--hero); color:#fff; border-radius:50%; width:26px; height:26px; cursor:pointer; font-size:14px; line-height:1; }
+  .chip button { border:0; background:var(--hero); color:#111; border-radius:50%; width:26px; height:26px; cursor:pointer; font-size:14px; line-height:1; }
   body.searching .cats, body.searching .sub { display:none; }
   h1.results { font-size:clamp(1.4rem, 5vw, 2rem); overflow-wrap:anywhere; }
   body.cat-view .hero, body.cat-view .cats, body.cat-view .sub { display:none; }
@@ -108,10 +108,10 @@
       <svg viewBox="0 0 720 197" aria-hidden="true">
         <defs>
           <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0b0"/><stop offset=".5" stop-color="#e2a82e"/><stop offset="1" stop-color="#a86a14"/></linearGradient>
-          <linearGradient id="plate" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset="1" stop-color="#d9962a"/></linearGradient>
+          <linearGradient id="plate" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d98a2b"/><stop offset="1" stop-color="#9a5a12"/></linearGradient>
           <linearGradient id="flame" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd23f"/><stop offset="1" stop-color="#ff8a1f"/></linearGradient>
           <linearGradient id="bowl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff5fae"/><stop offset="1" stop-color="#b3156b"/></linearGradient>
-          <radialGradient id="glow"><stop offset="0" stop-color="#ffd86b" stop-opacity=".55"/><stop offset="1" stop-color="#ffd86b" stop-opacity="0"/></radialGradient>
+          <radialGradient id="glow"><stop offset="0" stop-color="#fff" stop-opacity=".65"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
           <path id="star" d="M0-10L2.5-2.5L10 0L2.5 2.5L0 10L-2.5 2.5L-10 0L-2.5-2.5Z"/>
           <path id="badge" d="M190 8C215 8 225 30 250 36C285 44 310 38 330 70C340 85 340 95 330 110C310 142 285 136 250 144C225 150 215 172 190 172C165 172 155 150 130 144C95 136 70 142 50 110C40 95 40 85 50 70C70 38 95 44 130 36C155 30 165 8 190 8Z"/>
           <g id="flower">
@@ -131,15 +131,15 @@
         <circle cx="190" cy="100" r="95" fill="url(#glow)"/>
         <use href="#flower" x="58" y="98"/>
         <use href="#flower" x="322" y="98"/>
-        <use href="#star" x="112" y="40" fill="#ffe680"/>
-        <use href="#star" x="272" y="46" fill="#ffe680" transform="translate(272 46) scale(.7) translate(-272 -46)"/>
-        <use href="#star" x="96" y="150" fill="#fff3b8" transform="translate(96 150) scale(.6) translate(-96 -150)"/>
-        <use href="#star" x="288" y="146" fill="#ffe680" transform="translate(288 146) scale(.8) translate(-288 -146)"/>
+        <use href="#star" x="112" y="40" fill="#fff"/>
+        <use href="#star" x="272" y="46" fill="#fff" transform="translate(272 46) scale(.7) translate(-272 -46)"/>
+        <use href="#star" x="96" y="150" fill="#fff" transform="translate(96 150) scale(.6) translate(-96 -150)"/>
+        <use href="#star" x="288" y="146" fill="#fff" transform="translate(288 146) scale(.8) translate(-288 -146)"/>
 
         <!-- diya on a gold plate -->
         <g transform="translate(0 8)">
           <ellipse cx="190" cy="168" rx="98" ry="12" fill="url(#plate)"/>
-          <ellipse cx="190" cy="165" rx="84" ry="8" fill="#f7c85a"/>
+          <ellipse cx="190" cy="165" rx="84" ry="8" fill="#e8a64a"/>
           <path d="M120 118C120 150 150 166 190 166C230 166 260 150 260 118Z" fill="url(#bowl)"/>
           <path d="M136 132C160 154 220 154 244 132" fill="none" stroke="#ffc2e0" stroke-width="3" stroke-linecap="round"/>
           <ellipse cx="190" cy="118" rx="70" ry="14" fill="#fff"/>
@@ -364,8 +364,8 @@
     bike:    '<svg viewBox="0 0 48 32"><circle cx="10" cy="22" r="7"/><circle cx="38" cy="22" r="7"/><path d="M10 22L18 10H32L38 22M18 10L24 22L32 10M32 10L34 6H38M15 6H22"/></svg>'
   };
   var CATEGORIES = [
-    {icon:"bike", title:"Tri Cycles, Electric Vehicles & Baby Walkers", items:[
-      {label:"Baby Walkers & Rockers", keys:["baby walker","rocker"], emoji:"\ud83d\udc76", bg:"linear-gradient(135deg,#f6d9c6,#f3b7c8)", img:"https://raw.githubusercontent.com/iemvinay-dev/brand_list/main/Icon_0.JPG", fit:"contain"}
+    {icon:"bike", title:"Tricycle, Electric Vehicle & Baby Walker", items:[
+      {label:"Baby Walker", keys:["baby walker","rocker"], emoji:"\ud83d\udc76", bg:"linear-gradient(135deg,#f6d9c6,#f3b7c8)", img:"https://raw.githubusercontent.com/iemvinay-dev/brand_list/main/Icon_0.JPG", fit:"contain"}
     ]}
   ];
   var catsEl = document.getElementById("cats"), catBtns = [];
