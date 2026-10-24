@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=ABeeZee&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#e5e5e5; --fg:#000; --tile:#fff; --ink:#111; --muted:#555; --accent:#f5a623; --border:#d9d9d9; }
+  :root { --bg:#e5e5e5; --hero:#0047ff; --fg:#000; --tile:#fff; --ink:#111; --muted:#555; --accent:#f5a623; --border:#d9d9d9; }
   * { box-sizing: border-box; }
   body { margin:0; background:var(--bg); color:var(--fg); font-family:"ABeeZee", system-ui, sans-serif; }
   main { max-width:1100px; margin:0 auto; padding:28px 16px 60px; }
@@ -27,14 +27,132 @@
   .tile .name { font-size:1.15rem; font-weight:700; text-align:center; }
   .logo img + .name { display:none; }
   :focus-visible { outline:3px solid var(--accent); outline-offset:2px; }
+
+  /* Header: search + banners */
+  .hero { background:var(--hero); padding-top:16px; }
+  .hero-in { max-width:900px; margin:0 auto; padding:0 16px; }
+  .search { display:flex; align-items:center; gap:12px; background:#fff; border-radius:999px; padding:0 20px; height:56px; }
+  .sbtn { border:0; background:none; padding:6px; margin:0 -6px 0 -6px; display:flex; flex:none; cursor:pointer; border-radius:50%; }
+  .sbtn:hover { background:rgba(0,0,0,.06); }
+  .sbtn svg { width:24px; height:24px; }
+  @keyframes sblink { 0%,100% { background:transparent; transform:scale(1); } 50% { background:#ffc83d; transform:scale(1.3); } }
+  .sbtn.blink { animation:sblink .45s ease-in-out 3; }
+  .search input { flex:1; min-width:0; border:0; outline:0; background:transparent; font:inherit; font-size:1.1rem; color:#111; height:100%; }
+  .search input::placeholder { color:#222; opacity:1; }
+  .search input::-webkit-search-cancel-button { display:none; }
+  .promo { display:block; margin-top:14px; border-radius:14px; overflow:hidden; }
+  .promo svg { display:block; width:100%; height:auto; }
+  .carousel { margin:16px -16px 0; }
+  .track { display:flex; gap:14px; overflow-x:auto; scroll-snap-type:x mandatory; padding:0 16px; scroll-padding-left:16px;
+           scrollbar-width:none; position:relative; }
+  .track::-webkit-scrollbar { display:none; }
+  .slide { flex:0 0 min(88%, 640px); aspect-ratio:2.5/1; border-radius:18px; overflow:hidden; scroll-snap-align:start;
+           display:flex; flex-direction:column; justify-content:center; padding:5% 6%; color:#fff; text-decoration:none; }
+  .slide img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; }
+  .slide h2 { margin:0 0 8px; font-size:clamp(1.05rem, 4vw, 1.7rem); max-width:16ch; line-height:1.2; }
+  .slide p { margin:0; font-weight:700; background:#ffc83d; color:#222; align-self:flex-start; padding:4px 12px; border-radius:6px; font-size:clamp(.8rem, 2.6vw, 1rem); }
+  .vp { position:relative; }
+  .nav { position:absolute; top:50%; transform:translateY(-50%); z-index:2; width:38px; height:38px; border-radius:50%; border:0; padding:0;
+         background:rgba(255,255,255,.92); box-shadow:0 2px 8px rgba(0,0,0,.25); display:flex; align-items:center; justify-content:center; cursor:pointer; }
+  .nav:hover { background:#fff; }
+  .nav:active { transform:translateY(-50%) scale(.94); }
+  .nav svg { width:20px; height:20px; }
+  .nav.prev { left:22px; }
+  .nav.next { right:22px; }
+  .dots { display:flex; justify-content:center; gap:10px; margin-top:14px; }
+  .dot { width:12px; height:12px; border-radius:50%; border:0; padding:0; background:rgba(255,255,255,.4); cursor:pointer; }
+  .dot.on { background:#fff; }
+  .promo, .slide { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; pointer-events:none; cursor:default; }
+  .slide img { -webkit-user-drag:none; }
+  h1, .sub { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; pointer-events:none; cursor:default; }
+  .hero.searching .promo, .hero.searching .carousel { display:none; }
+  .wave { display:block; width:100%; height:40px; margin:8px 0 -1px; }
+  .wave path { fill:var(--bg); }
+  .empty { text-align:center; color:var(--muted); margin-top:24px; }
 </style>
 </head>
 <body>
+<header class="hero">
+  <div class="hero-in">
+    <form class="search" id="searchForm" role="search">
+      <button type="submit" class="sbtn" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="6.5"/><path d="M15 15l6 6"/></svg></button>
+      <input id="q" type="search" placeholder='Search for "Brand Name"' aria-label="Search brands" autocomplete="off">
+    </form>
+
+    <div class="promo" role="img" aria-label="Mega Diwali Scheme">
+      <svg viewBox="0 0 720 197" aria-hidden="true">
+        <defs>
+          <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0b0"/><stop offset=".5" stop-color="#e2a82e"/><stop offset="1" stop-color="#a86a14"/></linearGradient>
+          <linearGradient id="plate" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe08a"/><stop offset="1" stop-color="#d9962a"/></linearGradient>
+          <linearGradient id="flame" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd23f"/><stop offset="1" stop-color="#ff8a1f"/></linearGradient>
+          <linearGradient id="bowl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff5fae"/><stop offset="1" stop-color="#b3156b"/></linearGradient>
+          <radialGradient id="glow"><stop offset="0" stop-color="#ffd86b" stop-opacity=".55"/><stop offset="1" stop-color="#ffd86b" stop-opacity="0"/></radialGradient>
+          <path id="star" d="M0-10L2.5-2.5L10 0L2.5 2.5L0 10L-2.5 2.5L-10 0L-2.5-2.5Z"/>
+          <path id="badge" d="M190 8C215 8 225 30 250 36C285 44 310 38 330 70C340 85 340 95 330 110C310 142 285 136 250 144C225 150 215 172 190 172C165 172 155 150 130 144C95 136 70 142 50 110C40 95 40 85 50 70C70 38 95 44 130 36C155 30 165 8 190 8Z"/>
+          <g id="flower">
+            <g fill="#8e2aa8">
+              <ellipse cy="-14" rx="6.5" ry="14"/><ellipse cy="-14" rx="6.5" ry="14" transform="rotate(45)"/><ellipse cy="-14" rx="6.5" ry="14" transform="rotate(90)"/><ellipse cy="-14" rx="6.5" ry="14" transform="rotate(135)"/>
+              <ellipse cy="-14" rx="6.5" ry="14" transform="rotate(180)"/><ellipse cy="-14" rx="6.5" ry="14" transform="rotate(225)"/><ellipse cy="-14" rx="6.5" ry="14" transform="rotate(270)"/><ellipse cy="-14" rx="6.5" ry="14" transform="rotate(315)"/>
+            </g>
+            <g fill="#e8479f">
+              <ellipse cy="-10" rx="4.5" ry="10" transform="rotate(22)"/><ellipse cy="-10" rx="4.5" ry="10" transform="rotate(67)"/><ellipse cy="-10" rx="4.5" ry="10" transform="rotate(112)"/><ellipse cy="-10" rx="4.5" ry="10" transform="rotate(157)"/>
+              <ellipse cy="-10" rx="4.5" ry="10" transform="rotate(202)"/><ellipse cy="-10" rx="4.5" ry="10" transform="rotate(247)"/><ellipse cy="-10" rx="4.5" ry="10" transform="rotate(292)"/><ellipse cy="-10" rx="4.5" ry="10" transform="rotate(337)"/>
+            </g>
+            <circle r="4.5" fill="#fff"/>
+          </g>
+        </defs>
+
+        <!-- glow, flowers and sparkles -->
+        <circle cx="190" cy="100" r="95" fill="url(#glow)"/>
+        <use href="#flower" x="58" y="98"/>
+        <use href="#flower" x="322" y="98"/>
+        <use href="#star" x="112" y="40" fill="#ffe680"/>
+        <use href="#star" x="272" y="46" fill="#ffe680" transform="translate(272 46) scale(.7) translate(-272 -46)"/>
+        <use href="#star" x="96" y="150" fill="#fff3b8" transform="translate(96 150) scale(.6) translate(-96 -150)"/>
+        <use href="#star" x="288" y="146" fill="#ffe680" transform="translate(288 146) scale(.8) translate(-288 -146)"/>
+
+        <!-- diya on a gold plate -->
+        <g transform="translate(0 8)">
+          <ellipse cx="190" cy="168" rx="98" ry="12" fill="url(#plate)"/>
+          <ellipse cx="190" cy="165" rx="84" ry="8" fill="#f7c85a"/>
+          <path d="M120 118C120 150 150 166 190 166C230 166 260 150 260 118Z" fill="url(#bowl)"/>
+          <path d="M136 132C160 154 220 154 244 132" fill="none" stroke="#ffc2e0" stroke-width="3" stroke-linecap="round"/>
+          <ellipse cx="190" cy="118" rx="70" ry="14" fill="#fff"/>
+          <ellipse cx="190" cy="119" rx="61" ry="9" fill="#a8156a"/>
+          <path d="M190 40C205 62 222 72 222 94C222 110 208 120 190 120C172 120 158 110 158 94C158 72 175 62 190 40Z" fill="url(#flame)"/>
+          <path d="M190 70C198 82 206 88 206 98C206 108 199 114 190 114C181 114 174 108 174 98C174 88 182 82 190 70Z" fill="#ffe680"/>
+        </g>
+
+        <!-- Mega Diwali Scheme badge -->
+        <g transform="translate(355 8)">
+          <use href="#badge" fill="none" stroke="#e8458b" stroke-width="3" transform="translate(190 90) scale(1.07) translate(-190 -90)"/>
+          <use href="#badge" fill="#6b1359" stroke="#ff8a4c" stroke-width="5"/>
+          <use href="#badge" fill="none" stroke="url(#gold)" stroke-width="2" transform="translate(190 90) scale(.9) translate(-190 -90)"/>
+          <text x="190" y="58" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-size="17" letter-spacing="4" fill="url(#gold)">MEGA</text>
+          <text x="190" y="108" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-style="italic" font-size="56" fill="url(#gold)">Diwali</text>
+          <text x="190" y="140" text-anchor="middle" font-family="Georgia, serif" font-weight="700" font-size="17" letter-spacing="4" fill="url(#gold)">SCHEME</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="carousel">
+      <div class="vp">
+        <button type="button" class="nav prev" id="prev" aria-label="Previous banner"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <div class="track" id="track"></div>
+        <button type="button" class="nav next" id="next" aria-label="Next banner"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+      <div class="dots" id="dots"></div>
+    </div>
+  </div>
+  <svg class="wave" viewBox="0 0 1000 60" preserveAspectRatio="none" aria-hidden="true"><path d="M0 30C200 70 350 0 600 10C800 18 900 40 1000 30L1000 60L0 60Z"/></svg>
+</header>
+
 <main>
   <h1>Our Brands</h1>
   <p class="sub">Quality Toys from trusted brands</p>
 
   <div class="grid" id="grid"></div>
+  <p class="empty" id="empty" hidden>No brands found.</p>
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -45,6 +163,8 @@
   ];
   var brands = [];
   var grid = document.getElementById("grid");
+  var emptyMsg = document.getElementById("empty");
+  var term = "";
 
   function norm(row) {
     var o = {};
@@ -66,9 +186,13 @@
     render();
   }
   function render() {
-    var term = "";
     grid.innerHTML = "";
-    brands.filter(function(b){ return b.name.toLowerCase().indexOf(term) > -1; }).forEach(function(b) {
+    var searching = term !== "";
+    document.querySelector(".hero").classList.toggle("searching", searching);
+    if (searching) { stop(); } else { start(); }
+    var shown = brands.filter(function(b){ return b.name.toLowerCase().indexOf(term) > -1; });
+    emptyMsg.hidden = shown.length > 0;
+    shown.forEach(function(b) {
       var href = safeUrl(b.site);
       var el = document.createElement("button");
       el.type = "button"; el.className = "tile";
@@ -97,6 +221,88 @@
   fetch("brands.xlsx?v=" + Date.now(), {cache:"no-store"}).then(function(r){ if (!r.ok) throw 0; return r.arrayBuffer(); })
     .then(function(buf){ parse(XLSX.read(buf, {type:"array"})); })
     .catch(function(){ brands = FALLBACK; render(); });
+
+  // ---- Search bar ----
+  var q = document.getElementById("q");
+  q.addEventListener("input", function(){ term = q.value.trim().toLowerCase(); render(); });
+  document.getElementById("searchForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    term = q.value.trim().toLowerCase();
+    var btn = document.querySelector(".sbtn");
+    if (!term) {
+      // No text: blink the button and put the cursor in the box
+      render();
+      btn.classList.remove("blink");
+      void btn.offsetWidth;
+      btn.classList.add("blink");
+      btn.addEventListener("animationend", function(){ btn.classList.remove("blink"); }, {once:true});
+      q.focus();
+      return;
+    }
+    render();
+    q.blur();
+    grid.scrollIntoView({behavior:"smooth", block:"start"});
+  });
+
+  // ---- Banner carousel ----
+  // Add "img" (image URL) to any slide to show your own banner; without it a colored placeholder is shown.
+  var BANNERS = [
+    {title:"Cashback on Push Ride, Baby Walker & Electric Toys", tag:"Get upto 3% Cart Discount", bg:"linear-gradient(135deg,#ff7a3d,#d9381e)", link:"#", img:""},
+    {title:"New Arrivals", tag:"Fresh toys just landed", bg:"linear-gradient(135deg,#7b5cff,#3b2bb3)", link:"#", img:""},
+    {title:"Trusted Brands", tag:"Quality toys, every age", bg:"linear-gradient(135deg,#19b394,#0b6e5a)", link:"#", img:""}
+  ];
+  var track = document.getElementById("track"), dotsEl = document.getElementById("dots");
+  var slideEls = [], dotEls = [], idx = 0, timer = null, PAD = 16;
+
+  BANNERS.forEach(function(b, i){
+    var a = document.createElement("div");
+    a.className = "slide";
+    if (b.img) {
+      var im = document.createElement("img");
+      im.src = b.img; im.alt = b.title; im.loading = "lazy";
+      a.appendChild(im);
+    } else {
+      a.style.background = b.bg;
+      var h = document.createElement("h2"); h.textContent = b.title;
+      var p = document.createElement("p"); p.textContent = b.tag;
+      a.appendChild(h); a.appendChild(p);
+    }
+    track.appendChild(a); slideEls.push(a);
+
+    var d = document.createElement("button");
+    d.type = "button"; d.className = "dot"; d.setAttribute("aria-label", "Go to banner " + (i + 1));
+    d.addEventListener("click", function(){ go(i); });
+    dotsEl.appendChild(d); dotEls.push(d);
+  });
+
+  function go(i) { track.scrollTo({left: slideEls[i].offsetLeft - PAD, behavior: "smooth"}); }
+  function setActive() {
+    var best = 0, dist = 1e9;
+    slideEls.forEach(function(s, i){
+      var d = Math.abs(s.offsetLeft - PAD - track.scrollLeft);
+      if (d < dist) { dist = d; best = i; }
+    });
+    idx = best;
+    dotEls.forEach(function(d, i){ d.classList.toggle("on", i === best); });
+  }
+  function stop() { if (timer) { clearInterval(timer); timer = null; } }
+  function start() {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    stop();
+    timer = setInterval(function(){ go((idx + 1) % slideEls.length); }, 4000);
+  }
+  document.getElementById("prev").addEventListener("click", function(){
+    go((idx - 1 + slideEls.length) % slideEls.length); start();
+  });
+  document.getElementById("next").addEventListener("click", function(){
+    go((idx + 1) % slideEls.length); start();
+  });
+  track.addEventListener("scroll", setActive, {passive:true});
+  track.addEventListener("mouseenter", stop);
+  track.addEventListener("mouseleave", start);
+  track.addEventListener("touchstart", stop, {passive:true});
+  track.addEventListener("touchend", start, {passive:true});
+  setActive(); start();
 </script>
 </body>
 </html>
