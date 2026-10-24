@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=ABeeZee&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#000; --fg:#fff; --tile:#fff; --ink:#111; --muted:#bdbdbd; --accent:#f5a623; }
+  :root { --bg:#e5e5e5; --fg:#000; --tile:#fff; --ink:#111; --muted:#555; --accent:#f5a623; --border:#d9d9d9; }
   * { box-sizing: border-box; }
   body { margin:0; background:var(--bg); color:var(--fg); font-family:"ABeeZee", system-ui, sans-serif; }
   main { max-width:1100px; margin:0 auto; padding:28px 16px 60px; }
@@ -16,10 +16,10 @@
   .grid { display:grid; grid-template-columns:repeat(2,1fr); gap:20px; }
   @media (min-width:700px)  { .grid { grid-template-columns:repeat(3,1fr); gap:24px; } }
   @media (min-width:1000px) { .grid { grid-template-columns:repeat(4,1fr); } }
-  .tile { background:var(--tile); border:0; border-radius:28px; aspect-ratio:1/1; width:100%; display:flex;
+  .tile { background:var(--tile); border:1px solid var(--border); border-radius:28px; aspect-ratio:1/1; width:100%; display:flex;
           flex-direction:column; align-items:center; justify-content:center; padding:18px; gap:10px;
-          color:var(--ink); font:inherit; cursor:pointer; transition:transform .15s; }
-  .tile:hover { transform:scale(1.03); }
+          color:var(--ink); font:inherit; cursor:pointer; transition:transform .15s, box-shadow .15s; }
+  .tile:hover { transform:scale(1.03); box-shadow:0 6px 18px rgba(0,0,0,.12); }
   .tile:active { transform:scale(.98); }
   .tile:focus-visible { outline:3px solid var(--accent); outline-offset:3px; }
   .logo { display:flex; align-items:center; justify-content:center; width:100%; flex:1; min-height:0; }
