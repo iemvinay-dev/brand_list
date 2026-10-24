@@ -74,6 +74,10 @@
   .cat-row::-webkit-scrollbar { display:none; }
   .cat { flex:0 0 min(46%, 250px); scroll-snap-align:start; background:#fff; border:0; border-radius:16px; padding:0; overflow:hidden;
          box-shadow:0 2px 8px rgba(0,0,0,.18); cursor:pointer; font:inherit; color:#111; text-align:center; transition:transform .15s; }
+  button, .chip { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; -webkit-tap-highlight-color:transparent; }
+  button img { -webkit-user-drag:none; pointer-events:none; }
+  .cat { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; -webkit-tap-highlight-color:transparent; }
+  .cat img { -webkit-user-drag:none; pointer-events:none; }
   .cat:hover { transform:translateY(-2px); }
   .cat.on { outline:3px solid var(--hero); outline-offset:2px; }
   .cat .ci { aspect-ratio:1.72/1; display:flex; align-items:center; justify-content:center; font-size:clamp(2.4rem, 10vw, 3.6rem); }
