@@ -32,6 +32,12 @@
   .hero { background:var(--hero); padding-top:16px; }
   .hero-in { max-width:900px; margin:0 auto; padding:0 16px; }
   .search { display:flex; align-items:center; gap:12px; background:#fff; border-radius:999px; padding:0 20px; height:56px; }
+  .topbar { display:flex; align-items:center; gap:12px; }
+  .topbar .search { flex:1; min-width:0; }
+  .backbtn { border:0; background:#fff; width:56px; height:56px; padding:0; display:flex; align-items:center; justify-content:center; flex:none; cursor:pointer; border-radius:50%; }
+  .backbtn[hidden] { display:none; }
+  .backbtn:hover { background:#f3f3f3; }
+  .backbtn svg { width:24px; height:24px; }
   .sbtn { border:0; background:none; padding:6px; margin:0 -6px 0 -6px; display:flex; flex:none; cursor:pointer; border-radius:50%; }
   .sbtn:hover { background:rgba(0,0,0,.06); }
   .sbtn svg { width:24px; height:24px; }
@@ -83,13 +89,13 @@
   .cat .ci { aspect-ratio:1.72/1; display:flex; align-items:center; justify-content:center; font-size:clamp(2.4rem, 10vw, 3.6rem); }
   .cat .ci img { width:100%; height:100%; object-fit:cover; display:block; }
   .cat .cl { display:block; padding:16px 8px 18px; font-size:clamp(1rem, 3.4vw, 1.25rem); }
-  .filterbar { display:flex; justify-content:center; margin:0 0 20px; }
+  .filterbar { display:flex; justify-content:center; align-items:center; flex-wrap:wrap; gap:12px; margin:0 0 20px; }
   .filterbar[hidden] { display:none; }
   .chip { display:flex; align-items:center; gap:10px; background:#fff; border:1px solid var(--border); border-radius:999px; padding:6px 8px 6px 16px; }
   .chip button { border:0; background:var(--hero); color:#111; border-radius:50%; width:26px; height:26px; cursor:pointer; font-size:14px; line-height:1; }
   body.searching .cats, body.searching .sub { display:none; }
   h1.results { font-size:clamp(1.4rem, 5vw, 2rem); overflow-wrap:anywhere; }
-  body.cat-view .hero, body.cat-view .cats, body.cat-view .sub { display:none; }
+  body.cat-view .cats, body.cat-view .sub, body.cat-view .search, body.cat-view .promo, body.cat-view .carousel { display:none; }
   .hero.searching .promo, .hero.searching .carousel { display:none; }
   .wave { display:block; width:100%; height:40px; margin:8px 0 -1px; }
   .wave path { fill:var(--bg); }
@@ -99,10 +105,13 @@
 <body>
 <header class="hero">
   <div class="hero-in">
-    <form class="search" id="searchForm" role="search">
+    <div class="topbar">
+      <button type="button" class="backbtn" id="backSearch" aria-label="Back to home" hidden><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7"/></svg></button>
+      <form class="search" id="searchForm" role="search">
       <button type="submit" class="sbtn" aria-label="Search"><svg viewBox="0 0 24 24" fill="none" stroke="#111" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="6.5"/><path d="M15 15l6 6"/></svg></button>
       <input id="q" type="search" placeholder='Search for "Brand Name"' aria-label="Search brands" autocomplete="off">
-    </form>
+      </form>
+    </div>
 
     <div class="promo" role="img" aria-label="Mega Diwali Scheme">
       <svg viewBox="0 0 720 197" aria-hidden="true">
@@ -227,6 +236,7 @@
     document.querySelector(".hero").classList.toggle("searching", searching);
     document.body.classList.toggle("searching", searching);
     document.body.classList.toggle("cat-view", !!cat);
+    document.getElementById("backSearch").hidden = !(searching || cat);
     if (searching || cat) { stop(); } else { start(); }
     filterbar.hidden = !cat;
     if (cat) chipName.textContent = "Showing: " + cat.label;
@@ -294,7 +304,7 @@
     }
     render();
     q.blur();
-    grid.scrollIntoView({behavior:"smooth", block:"start"});
+    window.scrollTo({top:0, behavior:"smooth"});
   });
 
   // ---- Banner carousel ----
@@ -401,7 +411,12 @@
     wrap.appendChild(h); wrap.appendChild(row); catsEl.appendChild(wrap);
   });
 
-  document.getElementById("clearCat").addEventListener("click", function(){ cat = null; setCatUI(); render(); window.scrollTo({top:0, behavior:"smooth"}); });
+  function goHome() { cat = null; setCatUI(); render(); window.scrollTo({top:0, behavior:"smooth"}); }
+  document.getElementById("clearCat").addEventListener("click", goHome);
+  document.getElementById("backSearch").addEventListener("click", function(){
+    q.value = ""; term = ""; q.blur();
+    goHome();
+  });
 </script>
 </body>
 </html>
