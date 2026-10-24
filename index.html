@@ -65,6 +65,27 @@
   .promo, .slide { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; pointer-events:none; cursor:default; }
   .slide img { -webkit-user-drag:none; }
   h1, .sub { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; pointer-events:none; cursor:default; }
+  /* Category tabs */
+  .cat-sec { margin:8px 0 26px; }
+  .cat-title { display:flex; align-items:center; gap:12px; margin:0 0 12px 4px; font-size:clamp(1rem, 3.6vw, 1.35rem); font-weight:700; }
+  .cat-title { -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; pointer-events:none; cursor:default; }
+  .cat-title svg { width:38px; height:30px; flex:none; fill:none; stroke:#111; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+  .cat-row { display:flex; gap:16px; overflow-x:auto; scroll-snap-type:x mandatory; padding:6px 4px 14px; margin:0 -4px; scrollbar-width:none; }
+  .cat-row::-webkit-scrollbar { display:none; }
+  .cat { flex:0 0 min(46%, 250px); scroll-snap-align:start; background:#fff; border:0; border-radius:16px; padding:0; overflow:hidden;
+         box-shadow:0 2px 8px rgba(0,0,0,.18); cursor:pointer; font:inherit; color:#111; text-align:center; transition:transform .15s; }
+  .cat:hover { transform:translateY(-2px); }
+  .cat.on { outline:3px solid var(--hero); outline-offset:2px; }
+  .cat .ci { aspect-ratio:1.72/1; display:flex; align-items:center; justify-content:center; font-size:clamp(2.4rem, 10vw, 3.6rem); }
+  .cat .ci img { width:100%; height:100%; object-fit:cover; display:block; }
+  .cat .cl { display:block; padding:16px 8px 18px; font-size:clamp(1rem, 3.4vw, 1.25rem); }
+  .filterbar { display:flex; justify-content:center; margin:0 0 20px; }
+  .filterbar[hidden] { display:none; }
+  .chip { display:flex; align-items:center; gap:10px; background:#fff; border:1px solid var(--border); border-radius:999px; padding:6px 8px 6px 16px; }
+  .chip button { border:0; background:var(--hero); color:#fff; border-radius:50%; width:26px; height:26px; cursor:pointer; font-size:14px; line-height:1; }
+  body.searching .cats, body.searching .sub { display:none; }
+  h1.results { font-size:clamp(1.4rem, 5vw, 2rem); overflow-wrap:anywhere; }
+  body.cat-view .hero, body.cat-view .cats, body.cat-view .sub { display:none; }
   .hero.searching .promo, .hero.searching .carousel { display:none; }
   .wave { display:block; width:100%; height:40px; margin:8px 0 -1px; }
   .wave path { fill:var(--bg); }
@@ -148,9 +169,12 @@
 </header>
 
 <main>
-  <h1>Our Brands</h1>
+  <section class="cats" id="cats" aria-label="Categories"></section>
+
+  <h1 id="title">Our Brands</h1>
   <p class="sub">Quality Toys from trusted brands</p>
 
+  <div class="filterbar" id="filterbar" hidden><div class="chip"><span id="chipName"></span><button type="button" id="clearCat" aria-label="Clear category filter">&#10005;</button></div></div>
   <div class="grid" id="grid"></div>
   <p class="empty" id="empty" hidden>No brands found.</p>
 </main>
@@ -165,6 +189,8 @@
   var grid = document.getElementById("grid");
   var emptyMsg = document.getElementById("empty");
   var term = "";
+  var cat = null;
+  var filterbar = document.getElementById("filterbar"), chipName = document.getElementById("chipName");
 
   function norm(row) {
     var o = {};
@@ -195,9 +221,26 @@
     grid.innerHTML = "";
     var searching = term !== "";
     document.querySelector(".hero").classList.toggle("searching", searching);
-    if (searching) { stop(); } else { start(); }
-    var shown = brands.filter(function(b){ return b.hay.indexOf(term) > -1; });
+    document.body.classList.toggle("searching", searching);
+    document.body.classList.toggle("cat-view", !!cat);
+    if (searching || cat) { stop(); } else { start(); }
+    filterbar.hidden = !cat;
+    if (cat) chipName.textContent = "Showing: " + cat.label;
+    var shown = brands.filter(function(b){
+      if (b.hay.indexOf(term) < 0) return false;
+      return !cat || cat.keys.some(function(k){ return b.hay.indexOf(k) > -1; });
+    });
+    emptyMsg.textContent = cat ? "No brands listed under " + cat.label + " yet." : (searching ? "Try a different word or brand name." : "No brands found.");
     emptyMsg.hidden = shown.length > 0;
+    // Heading: show the search text instead of "Our Brands" while searching
+    var titleEl = document.getElementById("title");
+    if (searching) {
+      var typed = document.getElementById("q").value.trim();
+      titleEl.textContent = (shown.length ? "Results for \u201c" : "No results for \u201c") + typed + "\u201d";
+    } else {
+      titleEl.textContent = "Our Brands";
+    }
+    titleEl.classList.toggle("results", searching);
     shown.forEach(function(b) {
       var href = safeUrl(b.site);
       var el = document.createElement("button");
@@ -309,6 +352,52 @@
   track.addEventListener("touchstart", stop, {passive:true});
   track.addEventListener("touchend", start, {passive:true});
   setActive(); start();
+
+  // ---- Category tabs ----
+  // Each tab shows the brands whose Search Keys contain one of its "keys".
+  // Add an image URL in "img" to replace the emoji placeholder.
+  var ICONS = {
+    bike:    '<svg viewBox="0 0 48 32"><circle cx="10" cy="22" r="7"/><circle cx="38" cy="22" r="7"/><path d="M10 22L18 10H32L38 22M18 10L24 22L32 10M32 10L34 6H38M15 6H22"/></svg>'
+  };
+  var CATEGORIES = [
+    {icon:"bike", title:"Tri Cycles, Electric Vehicles & Baby Walkers", items:[
+      {label:"Baby Walkers & Rockers", keys:["baby walker","rocker"], emoji:"\ud83d\udc76", bg:"linear-gradient(135deg,#f6d9c6,#f3b7c8)", img:"https://raw.githubusercontent.com/iemvinay-dev/brand_list/main/Icon_0.JPG", fit:"contain"}
+    ]}
+  ];
+  var catsEl = document.getElementById("cats"), catBtns = [];
+
+  function setCatUI() { catBtns.forEach(function(x){ x.el.classList.toggle("on", x.item === cat); }); }
+
+  CATEGORIES.forEach(function(sec){
+    var wrap = document.createElement("div"); wrap.className = "cat-sec";
+    var h = document.createElement("h2"); h.className = "cat-title";
+    h.innerHTML = ICONS[sec.icon] || "";
+    var t = document.createElement("span"); t.textContent = sec.title; h.appendChild(t);
+    var row = document.createElement("div"); row.className = "cat-row";
+    sec.items.forEach(function(item){
+      item.keys = item.keys.map(clean);
+      var el = document.createElement("button");
+      el.type = "button"; el.className = "cat";
+      var ci = document.createElement("div"); ci.className = "ci";
+      if (item.img) {
+        var im = document.createElement("img"); im.src = item.img; im.alt = ""; im.loading = "lazy";
+        if (item.fit) { im.style.objectFit = item.fit; ci.style.background = "#fff"; }
+        im.onerror = function(){ im.remove(); ci.style.background = item.bg; ci.textContent = item.emoji; };
+        ci.appendChild(im);
+      } else { ci.style.background = item.bg; ci.textContent = item.emoji; }
+      var cl = document.createElement("span"); cl.className = "cl"; cl.textContent = item.label;
+      el.appendChild(ci); el.appendChild(cl);
+      el.addEventListener("click", function(){
+        cat = (cat === item) ? null : item;
+        setCatUI(); render();
+        window.scrollTo({top:0, behavior:"smooth"});
+      });
+      row.appendChild(el); catBtns.push({el:el, item:item});
+    });
+    wrap.appendChild(h); wrap.appendChild(row); catsEl.appendChild(wrap);
+  });
+
+  document.getElementById("clearCat").addEventListener("click", function(){ cat = null; setCatUI(); render(); window.scrollTo({top:0, behavior:"smooth"}); });
 </script>
 </body>
 </html>
